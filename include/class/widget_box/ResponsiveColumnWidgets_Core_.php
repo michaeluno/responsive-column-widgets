@@ -4,68 +4,104 @@
  *  
  * @package     Responsive Column Widgets
  * @copyright   Copyright (c) 2013, Michael Uno
- * @see            http://en.michaeluno.jp/responsive-column-widgets
+ * @see         http://en.michaeluno.jp/responsive-column-widgets
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU Public License
- * @since        1.0.0
- * @uses        ResponsiveColumnWidgets_Styles, ResponsiveColumnWidgets_WidgetBox, ResponsiveColumnWidgets_IDHandler
- * @filters        
- *     RCW_filter_widgetbox_output - applies to the outputs of widget boxes.
- *    RCW_filter_widget_output_array - applies to the widget output array. 
+ */
+
+/**
+ * Provides method to output widget boxes.
  * 
- *  
+ * @since       1.0.0
+ * @uses        ResponsiveColumnWidgets_Styles, ResponsiveColumnWidgets_WidgetBox, ResponsiveColumnWidgets_IDHandler
+ * @filter      apply       RCW_filter_widgetbox_output         Applies to the outputs of widget boxes.
+ * @filter      apply       RCW_filter_widget_output_array      Applies to the widget output array. 
  */
 class ResponsiveColumnWidgets_Core_ {
     
     // Objects
-    public $oOption;        // deals with the plugin options. Made it public in 1.1.2 to allow the AutoInsert class access this object. In 1.1.2.1 the StyleLoader class also uses it.
-    public $oStyle;        // since 1.1.2 - manipulates CSS rules. It is public because the Auto-Insert class uses it. In 1.1.2.1 the StyleLoader class also uses it.
-    public $oDecode;    // since 1.1.6 - decodes encrypted html contents as cache saved in a transient.
+    /**
+     * Deals with the plugin options.
+     * @since       unknown
+     * @since       1.1.2           Made it public to allow the AutoInsert class access this object.
+     * @since       1.1.2.1         the StyleLoader class also uses it.
+     */
+    public $oOption;
+    
+    /**
+     * Handles CSS rules.
+     * 
+     * @access      public          It is public because the Auto-Insert class uses it. 
+     * @since       1.1.2
+     * @since       1.1.2.1         the StyleLoader class also uses it.
+     */
+    public $oStyle; 
+    
+    /**
+     * 
+     * @since       1.1.6           Decodes encrypted html contents as cache saved in a transient.
+     */
+    public $oDecode;
         
-    // Default properties
-    protected $strShortCode;
-
-    protected $strPluginName = 'responsive-column-widgets';        // used to the name attribute of the script
-    protected $arrDefaultParams = array();    // will be overridden by the option object's array in the constructor.
+    /**
+     * Used for the name attribute of the script.
+     */
+    protected $strPluginName = 'responsive-column-widgets';        
+    
+    /**
+     * 
+     * @remark      will be overridden by the option object's array in the constructor.
+     */
+    protected $arrDefaultParams = array();   
             
     protected $strClassSelectorBox2 ='widget-area';
-    public $arrClassSelectors = array(    // overridden by the option in the constructor, made it public in 1.1.2.1 to allow the StyleLoader class to access it.
-        'box' => 'responsive_column_widgets_box',
-        'column' => 'responsive_column_widgets_column',
-        'row' => 'responsive_column_widgets_row',
+    
+    /**
+     * 
+     * @remark      overridden by the option in the constructor
+     * @since       unknown
+     * @since       made it public allow the StyleLoader class to access it.
+     */
+    public $arrClassSelectors = array(  
+        'box'       => 'responsive_column_widgets_box',
+        'column'    => 'responsive_column_widgets_column',
+        'row'       => 'responsive_column_widgets_row',
     );
-
-    protected $arrSidebarHierarchies;    // stores the array containing hierarchy information of the sidebars selected in the plugin widget.
+    
+    /**
+     * Stores the array containing hierarchy information of the sidebars selected in the plugin widget.
+     */
+    protected $arrSidebarHierarchies;   
     
     // Flags
     protected $bIsFormInDynamicSidebarRendered = false;
 
-    function __construct( $strShortCode, &$oOption ) {
+    /**
+     * Sets up properties and hooks.
+     */
+    function __construct( $oOption ) {
                 
-        // properties
-        $this->arrDefaultParams = $oOption->arrDefaultParams + $oOption->arrDefaultSidebarArgs;
-        
-        $this->strShortCode = $strShortCode;
-        // $this->strCSSDirURL = RESPONSIVECOLUMNWIDGETSURL . '/css/';
-
-        $this->arrClassSelectors = array( 
+        // Properties
+        $this->arrDefaultParams     = $oOption->arrDefaultParams + $oOption->arrDefaultSidebarArgs;
+        $this->arrClassSelectors    = array( 
             'box'        => $oOption->SanitizeAttribute( $oOption->arrOptions['general']['general_css_class_attributes']['box'] ),
-            'column'    => $oOption->SanitizeAttribute( $oOption->arrOptions['general']['general_css_class_attributes']['column'] ),
+            'column'     => $oOption->SanitizeAttribute( $oOption->arrOptions['general']['general_css_class_attributes']['column'] ),
             'row'        => $oOption->SanitizeAttribute( $oOption->arrOptions['general']['general_css_class_attributes']['row'] ),
         );
 
         // Objects
-        $this->oOption = $oOption;
-        $this->oStyle = new ResponsiveColumnWidgets_Styles( 
+        $this->oOption  = $oOption;
+        $this->oStyle   = new ResponsiveColumnWidgets_Styles( 
             $oOption, 
             $this->arrClassSelectors
         );
-        $this->oDecode = new ResponsiveColumnWidgets_Decoder;
+        $this->oDecode  = new ResponsiveColumnWidgets_Decoder;
                 
         // Register this plugin sidebar; if already registered, it will do nothing
-        if ( isset( $this->oOption->arrOptions['general']['delay_register_sidebar'] ) && $this->oOption->arrOptions['general']['delay_register_sidebar'] )
+        if ( isset( $this->oOption->arrOptions['general']['delay_register_sidebar'] ) && $this->oOption->arrOptions['general']['delay_register_sidebar'] ) {
             add_action( 'widgets_init', array( $this, 'registerSidebar' ), 999 );
-        else 
+        } else {
             $this->registerSidebar();    // must be called after $this->oOption is set.
+        }
         
         // Add the stylesheet    
         if ( isset( $this->oOption->arrOptions['general']['general_css_timimng_to_load'] ) 
@@ -78,20 +114,16 @@ class ResponsiveColumnWidgets_Core_ {
                 add_action( 'admin_head', array( $this->oStyle, 'AddStyleSheet' ) );
         
         }
-        
-        // Add the shortcode.
-        add_shortcode( $this->strShortCode, array( $this, 'GetWidgetBoxOutput' ) );
-        
-        /* Support Twenty Fourteen */
+           
+        // Support Twenty Fourteen 
         add_action( 'init', array( $this, 'supportTwentyFourteen' ) );
         
     }
     
         public function supportTwentyFourteen() {
-        
-            if ( function_exists( 'twentyfourteen_content_width' ) ) 
+            if ( function_exists( 'twentyfourteen_content_width' ) ) {
                 $this->strClassSelectorBox2 .= ' content-sidebar';            
-        
+            }
         }
         
     /*
@@ -124,17 +156,25 @@ class ResponsiveColumnWidgets_Core_ {
 
     
     /*
-     * The core methods to render widget boxes. RenderWidgetBox() and GetWidgetBoxOutput().
+     * The core methods to render widget boxes. RenderWidgetBox() and getWidgetBoxOutput().
+     * 
+     * @access      public      This is called from instantiated objects.
     */
-    public function RenderWidgetBox( $arrParams, $arrOutput=array(), $bIsStyleNotScoped=false ) {    // must be public as this is called from instantiated objects.
-        
-        echo $this->GetWidgetBoxOutput( $arrParams, $arrOutput, $bIsStyleNotScoped );    // do echo, not return.
-        
+    public function RenderWidgetBox( $arrParams, $arrOutput=array(), $bIsStyleNotScoped=false ) { 
+        echo $this->getWidgetBoxOutput( $arrParams, $arrOutput, $bIsStyleNotScoped ); 
     }    
-    public function GetWidgetBoxOutput( $arrParams, $arrOutput=array(), $bIsStyleNotScoped=false ) {    // since 1.0.4
+    
+    /**
+     * Returns the widget box output.
+     * 
+     * @remark      This method can be the callback for shortcode or manually called by the front-end function.
+     * @since       1.0.4
+     * @since       1.2.0       Changed the name from 'GetWidgetBoxOutput'.
+     * @return      string      The widget box HTML block output.
+     * @access      public      Called from instantiated objects such as the shortcode class's.
+     */
+    public function getWidgetBoxOutput( $arrParams, $arrOutput=array(), $bIsStyleNotScoped=false ) {
 
-        // This method can be the callback for shortcode or manually called by the front-end function.
-        // Notice that the last part is returning the output.
         $arrParams = $this->oOption->FormatParameterArray( $arrParams );
         $arrOutput = empty( $arrOutput ) ? array() : $arrOutput;    // for shortcode callbacks , it needs to be converted to array. Note that array( '' ) is evaluated not true so if this is an empty string, '', this line helps to make it empty array.
         
@@ -142,14 +182,18 @@ class ResponsiveColumnWidgets_Core_ {
         $bIsStyleScoped = $bIsStyleNotScoped ? false : true;
 
         // Check sidebar dependency conflicts
-        if ( $this->isDependencyConflict( $arrParams['sidebar'] ) )
-            return '<p class="error"><strong>Responsive Column Widget</strong>: ' . __( 'A dependency conflict occurred. Please reselect a child widget in the Widgets page of the administration area.', 'responsive-column-widgets' ) . '</p>';
+        if ( $this->isDependencyConflict( $arrParams['sidebar'] ) ) {
+            return '<p class="error">'
+                    . '<strong>Responsive Column Widget</strong>: '
+                    . __( 'A dependency conflict occurred. Please reselect a child widget in the Widgets page of the administration area.', 'responsive-column-widgets' ) 
+                . '</p>';
+        }
                 
         // Generate the ID - Get a unique ID selector based on the combination of the sidebar ID and the parameters.
-        $oID = new ResponsiveColumnWidgets_IDHandler;
-        $strCallID = $oID->GetCallID( $arrParams['sidebar'], $arrParams );    // an ID based on the sidebar ID + parameters; there could be the same ID if the passed values are the same.
-        $strIDSelector = $oID->GenerateIDSelector( $strCallID );    // a unique ID throughout the script load 
-        unset( $oID );    // release the object for below PHP 5.3 
+        $oID            = new ResponsiveColumnWidgets_IDHandler;
+        $strCallID      = $oID->GetCallID( $arrParams['sidebar'], $arrParams );    // an ID based on the sidebar ID + parameters; there could be the same ID if the passed values are the same.
+        $strIDSelector  = $oID->GenerateIDSelector( $strCallID );    // a unique ID throughout the script load 
+        unset( $oID );    // for PHP below 5.3
         
         // Retrieve the widget output buffer.
         $strOut = "<div class='{$arrParams['sidebar']}'>"
@@ -160,7 +204,6 @@ class ResponsiveColumnWidgets_Core_ {
             . $arrParams['after_widget_box']
             . "</div>";
             
-        // Done!
         return apply_filters( 'RCW_filter_widgetbox_output', $strOut ) . $this->GetCredit();
         
     }    

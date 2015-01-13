@@ -150,9 +150,9 @@ class ResponsiveColumnWidgets_AutoInsert_ {
             // 'autoinsert_position'  0: above, 1: below, 2: both            
             $intPositionType = $this->oOption->arrOptions['boxes'][ $strSidebarID ]['autoinsert_position'];
             if ( $intPositionType == 0 || $intPositionType == 2 )
-                $strPre .= $this->oCore->GetWidgetBoxOutput( array( 'sidebar' => $strSidebarID ), array(), false );
+                $strPre .= $this->oCore->getWidgetBoxOutput( array( 'sidebar' => $strSidebarID ), array(), false );
             if ( $intPositionType == 1 || $intPositionType == 2 )
-                $strPost .= $this->oCore->GetWidgetBoxOutput( array( 'sidebar' => $strSidebarID ), array(), false );
+                $strPost .= $this->oCore->getWidgetBoxOutput( array( 'sidebar' => $strSidebarID ), array(), false );
             
         }
         

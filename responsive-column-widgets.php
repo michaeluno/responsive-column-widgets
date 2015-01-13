@@ -124,6 +124,13 @@ final class ResponsiveColumnWidgets_Registry extends ResponsiveColumnWidgets_Reg
     static public $aTaxonomies = array(
     );
     
+    /**
+     * Used shortcodes.
+     */
+    static public $aShortcodes = array(
+        'main'  => 'responsive_column_widgets',
+    );
+    
 	/**
 	 * Sets up static properties.
 	 */

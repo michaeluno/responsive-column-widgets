@@ -194,7 +194,6 @@ final class ResponsiveColumnWidgets_Bootstrap {
                         
         // Load the core.
         $GLOBALS['oResponsiveColumnWidgets'] = new ResponsiveColumnWidgets_Core(
-            RESPONSIVECOLUMNWIDGETSKEY, 
             $GLOBALS['oResponsiveColumnWidgets_Options']
         );
 
@@ -215,7 +214,10 @@ final class ResponsiveColumnWidgets_Bootstrap {
 
         // Widgets.
         add_action( 'widgets_init', 'ResponsiveColumnWidgets_Widget::RegisterWidget' );
-    
+        
+        // Shortcode
+        new ResponsiveColumnWidgets_Shortcode( ResponsiveColumnWidgets_Registry::$aShortcodes['main'] );
+        
         // Compatibility issues
         add_action( 'sidebar_admin_setup', 'ResponsiveColumnWidgets_Widget::fixAsyncSaveBug' );    // for ajax async calls
         
