@@ -359,7 +359,6 @@ class ResponsiveColumnWidgets_Styles_ {
 
             $strStyles .=  self::getStyle( $arrParams );
 
-            
         }        
         return $strStyles;
         
@@ -420,11 +419,7 @@ class ResponsiveColumnWidgets_Styles_ {
                 width: auto;
                 height: auto;
             }
-            .{$this->strClassSelectorColumn}_1 {
-                /* margin-left: 0px !important; */
-                margin-left: 0px;
-                clear: left;
-            }
+
             .{$this->strClassSelectorColumn}_hide {
                 display: {$strHide} !important;
             }
@@ -439,8 +434,8 @@ class ResponsiveColumnWidgets_Styles_ {
             /*  GROUPING  ============================================================================= */
             .{$this->strClassSelectorBox}:before,
             .{$this->strClassSelectorBox}:after {
-                content:'';
-                display:table;
+                content: '';
+                display: table;
             }
             .{$this->strClassSelectorBox}:after {
                 clear:both;
@@ -453,25 +448,37 @@ class ResponsiveColumnWidgets_Styles_ {
                 zoom:1; /* For IE 6/7 (trigger hasLayout) */
             }
 
-            .{$this->strClassSelectorColumn}:first-child { margin-left: 0; } /* all browsers except IE6 and lower */
-
             /* GRID COLUMN SETUP  */
             .{$this->strClassSelectorColumn} {
                 display: block;
-                float:left;
-                margin: 1% 0 1% 1.6%;
-            }                    
+                float: left;
+                margin: 1% 0 1% 1.6%;                
+            }     
+            
+            /* all browsers except IE6 and lower */
+            .{$this->strClassSelectorColumn}:first-child { 
+                margin-left: 0; 
+            }
+            
+            /* 
+             * Remove the left margin of the first column. This should be done after all setting margins of columns for IE8. 
+             * If declared earlier and there is a rule setting left margin of first columns, then it takes effect instead in IE8.
+             */
+            .{$this->strClassSelectorColumn}_1 {
+                margin-left: 0px;
+                clear: left;
+            }            
             
             /*  GRID  ============================================================================= */
             .element_of_1 { width: 100%; }
-            .element_of_2 {    width: 49.2%; }
-            .element_of_3 {    width: 32.2%; }
-            .element_of_4 {    width: 23.8%; }
-            .element_of_5 {    width: 18.72%; }
-            .element_of_6 {    width: 15.33%; }
-            .element_of_7 {    width: 12.91%; }
+            .element_of_2 { width: 49.2%; }
+            .element_of_3 { width: 32.2%; }
+            .element_of_4 { width: 23.8%; }
+            .element_of_5 { width: 18.72%; }
+            .element_of_6 { width: 15.33%; }
+            .element_of_7 { width: 12.91%; }
             .element_of_8 { width: 11.1%; }
-            .element_of_9 {    width: 9.68%; }
+            .element_of_9 { width: 9.68%; }
             .element_of_10 { width: 8.56%; }
             .element_of_11 { width: 7.63%; }
             .element_of_12 { width: 6.86%; }
@@ -502,38 +509,12 @@ class ResponsiveColumnWidgets_Styles_ {
                 padding: 0;
             }
         ";
-        
-        /*
-            ROWS  ============================================================================= 
-            .{$this->strClassSelectorRow} {
-                clear: both;
-                padding: 0px;
-                margin: 0px;
-            }
-    
-
-         */
-            /*  GO FULL WIDTH AT LESS THAN 600 PIXELS 
-            @media only screen and (max-width: 600px) {
-                .element_of_2,
-                .element_of_3,
-                .element_of_4,
-                .element_of_5,
-                .element_of_6,
-                .element_of_7,
-                .element_of_8,
-                .element_of_9,
-                .element_of_10,
-                .element_of_11,
-                .element_of_12    
-                {    width: 100%;  }
-            }
-            */            
+            
         $strIDAttr  = $this->oOption->SanitizeAttribute( "{$this->oOption->oInfo->Name} {$this->oOption->oInfo->Version}" );
         $strCSS     = apply_filters( 'RCW_filter_base_styles', $strCSS );
         $strCSS     = $this->oOption->arrOptions['general']['general_css_minify'] ? $this->minifyCSS( $strCSS ) : $strCSS;
         return "<style type='text/css' id='{$strIDAttr}' {$strScoped}>" 
-            . $strCSS
+                . $strCSS
             . "</style>" . PHP_EOL;
         
     }

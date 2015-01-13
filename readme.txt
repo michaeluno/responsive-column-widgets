@@ -206,6 +206,7 @@ Sure. Please post it in the [forum](http://wordpress.org/support/plugin/responsi
 == Changelog ==
 
 = 1.2.0 =
+- Fixed an issue that columns were not properly displayed in Internet Explorer 8.
 - Tweaked the layout of the plugin setting page.
 - Optimized the performance.
 
