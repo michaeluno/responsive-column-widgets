@@ -95,65 +95,32 @@ class ResponsiveColumnWidgets_Core_ {
             $this->arrClassSelectors
         );
         $this->oDecode  = new ResponsiveColumnWidgets_Decoder;
-                
-        // Register this plugin sidebar; if already registered, it will do nothing
-        if ( isset( $this->oOption->arrOptions['general']['delay_register_sidebar'] ) && $this->oOption->arrOptions['general']['delay_register_sidebar'] ) {
-            add_action( 'widgets_init', array( $this, 'registerSidebar' ), 999 );
-        } else {
-            $this->registerSidebar();    // must be called after $this->oOption is set.
-        }
-        
+                        
         // Add the stylesheet    
         if ( isset( $this->oOption->arrOptions['general']['general_css_timimng_to_load'] ) 
             && ! $this->oOption->arrOptions['general']['general_css_timimng_to_load'] ) {    // 0 for the header
             
             add_action( 'wp_head', array( $this->oStyle, 'AddStyleSheet' ) );
-            if ( $this->oOption->arrOptions['general']['general_css_areas_to_load']['login'] )
+            if ( $this->oOption->arrOptions['general']['general_css_areas_to_load']['login'] ) {
                 add_action( 'login_head', array( $this->oStyle, 'AddStyleSheet' ) );
-            if ( $this->oOption->arrOptions['general']['general_css_areas_to_load']['admin'] )            
+            }
+            if ( $this->oOption->arrOptions['general']['general_css_areas_to_load']['admin'] ) {
                 add_action( 'admin_head', array( $this->oStyle, 'AddStyleSheet' ) );
-        
+            }        
         }
            
-        // Support Twenty Fourteen 
+        // Compatibility Fixes
         add_action( 'init', array( $this, 'supportTwentyFourteen' ) );
         
     }
-    
+        /**
+         * Support Twenty Fourteen 
+         */
         public function supportTwentyFourteen() {
             if ( function_exists( 'twentyfourteen_content_width' ) ) {
                 $this->strClassSelectorBox2 .= ' content-sidebar';            
             }
         }
-        
-    /*
-     * Registers saved sidebars
-     * */
-    public function registerSidebar() {
-        
-        global $wp_registered_sidebars;
-
-        if ( ! function_exists( 'register_sidebar' ) ) return;
-        
-        foreach ( $this->oOption->arrOptions['boxes'] as $strSidebarID => $arrBoxOptions )     {
-            
-            if ( array_key_exists( 'Responsive_Column_Widgets', $GLOBALS['wp_registered_sidebars'] ) ) continue;
-            
-            register_sidebar( 
-                array(
-                    'name' => $arrBoxOptions['label'],
-                    'id' => strtolower( $arrBoxOptions['sidebar'] ), // must be all lowercase
-                    'description' => $arrBoxOptions['description'],
-                    'before_widget' => $arrBoxOptions['before_widget'],
-                    'after_widget' => $arrBoxOptions['after_widget'],
-                    'before_title' => $arrBoxOptions['before_title'],
-                    'after_title' => $arrBoxOptions['after_title'],
-                ) 
-            );    
-        }
-
-    }
-
     
     /*
      * The core methods to render widget boxes. RenderWidgetBox() and getWidgetBoxOutput().
@@ -176,9 +143,11 @@ class ResponsiveColumnWidgets_Core_ {
     public function getWidgetBoxOutput( $arrParams, $arrOutput=array(), $bIsStyleNotScoped=false ) {
 
         $arrParams = $this->oOption->FormatParameterArray( $arrParams );
-        $arrOutput = empty( $arrOutput ) ? array() : $arrOutput;    // for shortcode callbacks , it needs to be converted to array. Note that array( '' ) is evaluated not true so if this is an empty string, '', this line helps to make it empty array.
+
+        // for shortcode callbacks , it needs to be converted to array. Note that array( '' ) is evaluated not true so if this is an empty string, '', this line helps to make it empty array.
+        $arrOutput = empty( $arrOutput ) ? array() : $arrOutput;    
         
-        // If this is a callback for the shortcode, the second parameter will be false. Reverse the value.
+        // If this is a callback for the shortcode, the third parameter will be false. Reverse the value.
         $bIsStyleScoped = $bIsStyleNotScoped ? false : true;
 
         // Check sidebar dependency conflicts
@@ -195,7 +164,7 @@ class ResponsiveColumnWidgets_Core_ {
         $strIDSelector  = $oID->GenerateIDSelector( $strCallID );    // a unique ID throughout the script load 
         unset( $oID );    // for PHP below 5.3
         
-        // Retrieve the widget output buffer.
+        // Retrieve the widget output.
         $strOut = "<div class='{$arrParams['sidebar']}'>"
                 . $arrParams['before_widget_box']
                 . "<div id='{$strIDSelector}' class='{$this->arrClassSelectors['box']} {$this->strClassSelectorBox2}'>"
@@ -207,20 +176,26 @@ class ResponsiveColumnWidgets_Core_ {
         return apply_filters( 'RCW_filter_widgetbox_output', $strOut ) . $this->GetCredit();
         
     }    
-    protected function isDependencyConflict( $strSidebarID ) {    // since 1.1.7.3
+    /**
+     * Check sidebar dependency conflicts.
+     * 
+     * @since       1.1.7.3
+     */
+    protected function isDependencyConflict( $strSidebarID ) { 
         
         if ( ! isset( $this->arrSidebarHierarchies ) ) {
-            // Store the sidebar hierarchy array in a property - since 1.1.7.3
+            // 1.1.7.3+ Store the sidebar hierarchy array in a property.
             $oWO = new ResponsiveColumnWidgets_WidgetOptions;
             $this->arrSidebarHierarchies = $oWO->GetHierarchyBase();
             unset( $oWO );    // for PHP below 5.3
         }
        
         $oSH = new ResponsiveColumnWidgets_SidebarHierarchy();
-        $arrDependencies = $oSH->getDependenciesOf( $strSidebarID, $this->arrSidebarHierarchies );        
+        $arrDependencies = $oSH->getDependenciesOf( $strSidebarID, $this->arrSidebarHierarchies );
         unset( $oSH );    // for PHP below 5.3.
-        if ( isset( $this->arrSidebarHierarchies[''] ) || in_array( $strSidebarID, $arrDependencies ) ) 
+        if ( isset( $this->arrSidebarHierarchies[''] ) || in_array( $strSidebarID, $arrDependencies ) ) {
             return true;
+        }
         
         return false;
         
@@ -240,12 +215,15 @@ class ResponsiveColumnWidgets_Core_ {
     protected function getCorrectSidebarID( $vIndex ) {
         
         global $wp_registered_sidebars;
-        if ( is_int( $vIndex ) ) return "sidebar-$vIndex";
+        if ( is_int( $vIndex ) ) { 
+            return "sidebar-$vIndex";
+        }
 
         $vIndex = sanitize_title( $vIndex );
         foreach ( ( array ) $wp_registered_sidebars as $strKey => $arrValue ) {
-            if ( sanitize_title( $arrValue['name'] ) == $vIndex ) 
+            if ( sanitize_title( $arrValue['name'] ) == $vIndex ) {
                 return $strKey;
+            }
         }
         return $vIndex;
         
@@ -261,6 +239,11 @@ class ResponsiveColumnWidgets_Core_ {
         return true;
         
     }    
+    
+    /**
+     * Returns the widget box output.
+     * 
+     */
     protected function getOutputWidgetBuffer( $arrOutput, &$arrParams, $strCallID, $bIsStyleScoped ) {
         
         // Check if the cache duration is set and if the cache is stored.
@@ -338,8 +321,9 @@ class ResponsiveColumnWidgets_Core_ {
                     
             }    
             
-            if ( $arrParams['cache_duration'] > 0 ) 
+            if ( $arrParams['cache_duration'] > 0 ) {
                 set_transient( $strCacheID, base64_encode( $strBuffer ), $arrParams['cache_duration'] );
+            }
                 
         }
             
@@ -352,8 +336,7 @@ class ResponsiveColumnWidgets_Core_ {
             $bIsStyleScoped 
         );
             
-        // Done!
-        unset( $oWidgetBox );    // make sure it's released for PHP below 5.3.
+        unset( $oWidgetBox );    // for PHP below 5.3.
         return $strBuffer;
         
     }
@@ -373,4 +356,5 @@ class ResponsiveColumnWidgets_Core_ {
            
         echo "<br/>";
     }         
+    
 }

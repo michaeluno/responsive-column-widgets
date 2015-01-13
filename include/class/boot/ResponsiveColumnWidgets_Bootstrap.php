@@ -218,6 +218,9 @@ final class ResponsiveColumnWidgets_Bootstrap {
         // Shortcode
         new ResponsiveColumnWidgets_Shortcode( ResponsiveColumnWidgets_Registry::$aShortcodes['main'] );
         
+        // Sidebar
+        new ResponsiveColumnWidgets_Sidebar( $GLOBALS['oResponsiveColumnWidgets_Options'] );
+        
         // Compatibility issues
         add_action( 'sidebar_admin_setup', 'ResponsiveColumnWidgets_Widget::fixAsyncSaveBug' );    // for ajax async calls
         

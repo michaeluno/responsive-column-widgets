@@ -9,6 +9,7 @@ $_aClassFiles = array(
 	"ResponsiveColumnWidgets_Option"	=>	ResponsiveColumnWidgets_Registry::$sDirPath . "/include/class/option/ResponsiveColumnWidgets_Option.php", 
 	"ResponsiveColumnWidgets_Option_"	=>	ResponsiveColumnWidgets_Registry::$sDirPath . "/include/class/option/ResponsiveColumnWidgets_Option_.php", 
 	"ResponsiveColumnWidgets_Shortcode"	=>	ResponsiveColumnWidgets_Registry::$sDirPath . "/include/class/shortcode/ResponsiveColumnWidgets_Shortcode.php", 
+	"ResponsiveColumnWidgets_Sidebar"	=>	ResponsiveColumnWidgets_Registry::$sDirPath . "/include/class/sidebar/ResponsiveColumnWidgets_Sidebar.php", 
 	"ResponsiveColumnWidgets_SidebarHierarchy"	=>	ResponsiveColumnWidgets_Registry::$sDirPath . "/include/class/sidebar/ResponsiveColumnWidgets_SidebarHierarchy.php", 
 	"ResponsiveColumnWidgets_SidebarHierarchy_"	=>	ResponsiveColumnWidgets_Registry::$sDirPath . "/include/class/sidebar/ResponsiveColumnWidgets_SidebarHierarchy_.php", 
 	"ResponsiveColumnWidgets_StyleLoader"	=>	ResponsiveColumnWidgets_Registry::$sDirPath . "/include/class/style/ResponsiveColumnWidgets_StyleLoader.php", 

@@ -1,18 +1,19 @@
 <?php
 /**
-    Returns plugin specific CSS rules
-    
+ * Returns plugin specific CSS rules.
+ *   
  * @package     Responsive Column Widgets
  * @copyright   Copyright (c) 2013, Michael Uno
- * @authorurl    http://michaeluno.jp
+ * @authorurl   http://michaeluno.jp
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU Public License
- * @since        1.1.2
- * 
-    @filters
-    RCW_filter_base_styles: applies to the base CSS rules of the plugin.
-    
-*/
+ */
 
+/**
+ * Returns plugin specific CSS rules.
+ * 
+ * @since       1.1.2
+ * @filter      apply       RCW_filter_base_styles          applies to the base CSS rules of the plugin.
+ */
 class ResponsiveColumnWidgets_Styles_ {
     
     // Default Properties
@@ -31,22 +32,26 @@ class ResponsiveColumnWidgets_Styles_ {
         12 =>    6.86,
     );        
     
-    // Dynamic Properties
-            
+    /**
+     * Sets up properties.
+     */
     function __construct( &$oOption, $arrClassSelectors ) {
         
         $this->oOption = $oOption;
         
-        $this->strClassSelectorBox = $arrClassSelectors['box'];
-        $this->strClassSelectorColumn = $arrClassSelectors['column'];
-        $this->strClassSelectorRow = $arrClassSelectors['row'];
-        $this->strClassWidgetBoxWidget = 'widget_box_widget';
+        $this->strClassSelectorBox      = $arrClassSelectors['box'];
+        $this->strClassSelectorColumn   = $arrClassSelectors['column'];
+        $this->strClassSelectorRow      = $arrClassSelectors['row'];
+        $this->strClassWidgetBoxWidget  = 'widget_box_widget';
     }
 
     /*
      * Used by hooks that embed base styles such as wp_head, login_head, admin_head.
+     * 
+     * @todo        examine why this is not done in the style loader class.
+     * @remark      callback of wp_head, login_head, admin_head
     */
-    public function AddStyleSheet() {    // used by hooks
+    public function AddStyleSheet() {
     
         global $arrResponsiveColumnWidgets_Flags;
         $arrResponsiveColumnWidgets_Flags['base_style'] = true;
@@ -56,15 +61,55 @@ class ResponsiveColumnWidgets_Styles_ {
         
     }
 
-
-    /*
-     * Used by the methods for output widget buffers
-    */
-    public function GetStyles( $strSidebarID, $strCallID, $strCSSRules, $arrScreenMaxWidths, $bIsStyleScoped ) {    // since 1.1.2, must be public as used from an instantiated object.
+    /**
+     * Returns the CSS rules.
+     * 
+     * @since       1.1.2.1
+     * @since       1.2.0           Moved from the _StyleLoader class as it more makes sense in the Style class.
+     * Made it static anc changed the scope public from protected as the ..._Style class access it. Removed the first parameter of the core object.
+     * @access      public  
+     */
+    static public function getStyle( $arrParams=array() ) {
         
-        /*
-         * Retrieve the CSS rules.
-        */
+        global $oResponsiveColumnWidgets;
+        if ( ! isset( $oResponsiveColumnWidgets ) ) { return ''; }
+        
+        $oStyle     = $oResponsiveColumnWidgets->oStyle;
+        $oOption    = $oResponsiveColumnWidgets->oOption;
+        
+        $arrParams = $oOption->FormatParameterArray( $arrParams );
+        $oWidgetBox = new ResponsiveColumnWidgets_WidgetBox( 
+            $arrParams, 
+            $oOption->SetMinimiumScreenMaxWidth(    // the max-columns array
+                $oOption->FormatColumnArray( 
+                    $arrParams['columns'],     
+                    $arrParams['default_media_only_screen_max_width'] 
+                )        
+            ),
+            $oOption->formatColSpanArray( $arrParams['colspans'] ),
+            $oResponsiveColumnWidgets->arrClassSelectors
+        );    
+        
+        $oID = new ResponsiveColumnWidgets_IDHandler;
+        return $oStyle->GetStyles( 
+            $arrParams['sidebar'], 
+            $oID->GetCallID( $arrParams['sidebar'], $arrParams ), 
+            $arrParams['custom_style'], 
+            $oWidgetBox->GetScreenMaxWidths(), 
+            false    // no scoped 
+        );
+                                              
+    }        
+    
+    /*
+     * Returns the CSS rules.
+     * 
+     * @remark      Used by the methods for output widget buffers
+     * @since       1.1.2       
+     * @access      public      must be public as used from an instantiated object.
+    */
+    public function GetStyles( $strSidebarID, $strCallID, $strCSSRules, $arrScreenMaxWidths, $bIsStyleScoped ) {   
+        
         $strStyles = '';
         
         // Add the base CSS rules if not loaded yet. 
@@ -78,7 +123,14 @@ class ResponsiveColumnWidgets_Styles_ {
         return $strStyles;
         
     }
-    public function GetBaseStylesIfNotAddedYet( $bScoped=true ) {    // Since 1.1.0, moved from the core method in 1.1.1, moved from the core class in 1.1.2
+    
+    /**
+     * 
+     * @since       1.1.0
+     * @since       1.1.1       moved from the core method
+     * @since       1.1.2       moved from the core class
+     */
+    public function GetBaseStylesIfNotAddedYet( $bScoped=true ) {
         
         // If the timing to load the styles is set to the first box's rendering, 
         global $arrResponsiveColumnWidgets_Flags;
@@ -116,7 +168,7 @@ class ResponsiveColumnWidgets_Styles_ {
             $strPrefixColumn = $this->strClassSelectorColumn . '_' . $intScreenMaxWidth;
             $strPrefixRow = $this->strClassSelectorRow . '_' . $intScreenMaxWidth;
                 
-            // okay, add the rules.
+            // Add the rules.
             $strStyleRules .= "@media only screen and (min-width: " . ( $_iPreveousMaxWidth + 1 ) . "px) and (max-width: {$intScreenMaxWidth}px) {". PHP_EOL;    
             foreach ( $this->strColPercentages as $intElement => $strWidthPercentage )     {
                 
@@ -128,7 +180,7 @@ class ResponsiveColumnWidgets_Styles_ {
             
             }
             
-            // Add the widths for col-spans. ( since 1.1.5 )
+            // 1.1.5+ Add the widths for col-spans.
             $strStyleRules .= $this->getWidthsForColSpans( $strSidebarID, $strPrefixColumn . '_' );
             
             // Override the other screen max-widths clear property.
@@ -159,12 +211,17 @@ class ResponsiveColumnWidgets_Styles_ {
         return $strStyleRules;
         
     }
-    protected function GetClearProperties( $strSidebarID, $arrScreenMaxWidths, $intThisScreenMaxWidth ) {    // since 1.1.2
+    
+    /**
+     * 
+     * @since 1.1.2
+     */
+    protected function GetClearProperties( $strSidebarID, $arrScreenMaxWidths, $intThisScreenMaxWidth ) { 
         
         $strStyleRules = '';
         foreach ( $arrScreenMaxWidths as $intScreenMaxWidth ) {
             
-            if ( $intScreenMaxWidth == 0 ) continue;
+            if ( $intScreenMaxWidth == 0 ) { continue; }
             
             $strPrefixColumn = $this->strClassSelectorColumn . '_' . $intScreenMaxWidth;
             
@@ -183,20 +240,27 @@ class ResponsiveColumnWidgets_Styles_ {
             $strStyleRules .= " .{$strSidebarID} .{$strPrefixColumn}_1 { clear: none; } " . PHP_EOL;
                 
         }    
-        
         return $strStyleRules . $strOverriderOthers;
         
     }
     
-    public function GetWidgetBoxStyleIfNotAddedYet( $strSidebarID, $strCallID, $arrScreenMaxWidths, $bIsScoped=true ) {    // since 1.1.2, called from the instantiated core class so it must be public.
-
-        // $strCallID must be a unique string that represents the call of a particular widget box's rendering request.
+    /**
+     * 
+     * @access      public      called from the instantiated core class so it must be public.
+     * @since       1.1.2       
+     * @param       string      $strSidebarID
+     * @param       string      $strCallID          This must be a unique string that represents the call of a particular widget box's rendering request.
+     * @param       array       $arrScreenMaxWidths
+     * @param       boolean     $bIsScoped
+     */
+    public function GetWidgetBoxStyleIfNotAddedYet( $strSidebarID, $strCallID, $arrScreenMaxWidths, $bIsScoped=true ) {
         
         global $arrResponsiveColumnWidgets_Flags;
         
         // If already loaded, return an empty string.
-        if ( in_array( $strCallID, $arrResponsiveColumnWidgets_Flags['arrWidgetBoxRenderingCallerIDs'] ) )
+        if ( in_array( $strCallID, $arrResponsiveColumnWidgets_Flags['arrWidgetBoxRenderingCallerIDs'] ) ) {
             return '';
+        }
             
         // Store the widget box's sidebar ID into the global flag array.
         $arrResponsiveColumnWidgets_Flags['arrWidgetBoxRenderingCallerIDs'][] = $strCallID;            
@@ -210,8 +274,9 @@ class ResponsiveColumnWidgets_Styles_ {
         global $arrResponsiveColumnWidgets_Flags;    
         
         // If already loaded, return an empty string.
-        if ( in_array( $strSidebarID, $arrResponsiveColumnWidgets_Flags['arrUserCustomStyles'] ) )
+        if ( in_array( $strSidebarID, $arrResponsiveColumnWidgets_Flags['arrUserCustomStyles'] ) ) {
             return '';
+        }
         
         // Store the widget box's sidebar ID into the global flag array.
         $arrResponsiveColumnWidgets_Flags['arrUserCustomStyles'][] = $strSidebarID;
@@ -220,26 +285,27 @@ class ResponsiveColumnWidgets_Styles_ {
         if ( isset( $this->oOption->arrOptions['boxes'][ $strSidebarID ] ) ) {    // the sidebar ID can be the one that the theme provides, not the plugin. In that case, the options are not associated.
             $strCustomCSSRules .= " .{$strSidebarID} { display: inline-block; width: 100%; }" . PHP_EOL;
             $strBGColor = $this->oOption->arrOptions['boxes'][ $strSidebarID ][ 'widget_box_container_background_color' ];
-            if ( $strBGColor )
+            if ( $strBGColor ) {
                 $strCustomCSSRules .= " .{$strSidebarID} { background-color: {$strBGColor} }" . PHP_EOL;
+            }
             $strMaxWidth = $this->oOption->arrOptions['boxes'][ $strSidebarID ][ 'widget_box_max_width' ];
-            if ( $strMaxWidth )
+            if ( $strMaxWidth ) {
                 $strCustomCSSRules .= " .{$strSidebarID} .{$this->strClassSelectorBox} { max-width: {$strMaxWidth}px }" . PHP_EOL;
+            }
             $arrContainerPaddings = $this->oOption->arrOptions['boxes'][ $strSidebarID ][ 'widget_box_container_paddings' ];
             if ( array_filter( $arrContainerPaddings ) ) {
                 $strPadding = $this->getPaddingPropertyFromArray( $arrContainerPaddings );
                 $strCustomCSSRules .= " .{$strSidebarID} { padding: {$strPadding} }" . PHP_EOL;
             }
             $strColumnAlignment = $this->oOption->arrOptions['boxes'][ $strSidebarID ][ 'widget_box_column_text_alignment' ];            
-            if ( $strColumnAlignment != 'left' ) 
+            if ( $strColumnAlignment != 'left' ) {
                 $strCustomCSSRules .= " .{$strSidebarID} .{$this->strClassSelectorColumn} { text-align: {$strColumnAlignment}; } ";
+            }
             
         }
         
-// ResponsiveColumnWidgets_Debug::DumpArray( array( $strCustomCSSRules ), dirname( __FILE__ ) . '/custom_style.txt' );        
-
         $strCustomCSSRules = trim( $strCustomCSSRules );
-        if ( empty( $strCustomCSSRules ) ) return '';
+        if ( empty( $strCustomCSSRules ) ) { return ''; }
 
         // Okay, return the custom CSS rules.
         $strIDAttribute = 'style_custom_' . $strIDSelector;
@@ -249,37 +315,39 @@ class ResponsiveColumnWidgets_Styles_ {
             . '</style>' . PHP_EOL;        
         
     }
-    protected function getPaddingPropertyFromArray( $arrPaddings ) {    // since 1.1.7
     
-        $strPadding = '';
-        $arrPositions = array( 'top' => '', 'right' => '', 'bottom' => '', 'left' => '' );
-        $arrPaddings = $arrPaddings + $arrPositions;
-        foreach( $arrPositions as $strPosition => $v ) 
+    /**
+     * 
+     * @since 1.1.7
+     */
+    protected function getPaddingPropertyFromArray( $arrPaddings ) {   
+    
+        $strPadding     = '';
+        $arrPositions   = array( 'top' => '', 'right' => '', 'bottom' => '', 'left' => '' );
+        $arrPaddings    = $arrPaddings + $arrPositions;
+        foreach( $arrPositions as $strPosition => $v ) {
             $strPadding .= $arrPaddings[ $strPosition ] ? $arrPaddings[ $strPosition ] . "px " : "0 ";
+        }
         return trim( $strPadding );
         
     }
     
-    /*
-     *     Common methods used by multiple methods. 
+    // == Common methods used by multiple methods  ==
+    
+    /**
+     *     
+     * @remark      It is assumed that this method is called in the head tag ( by the methods/functions triggered with the hooks ).
+     * @since       1.1.2.1
      * */
-    protected function GetUserDefinedEnqueuedStyles() {    // since 1.1.2.1
-        
-        // It is assumed that this method is called in the head tag ( by the methods/functions triggered with the hooks ).
+    protected function GetUserDefinedEnqueuedStyles() {
         
         // This general option stores parameters in each element.
         $strStyles = $this->GetStyleDefaultShortCode();    // the default style for an empty parameter.
         foreach( $this->oOption->arrOptions['general']['general_css_load_in_head'] as $strParams ) {    
         
-            if ( trim( $strParams ) == '' ) continue;
-// ResponsiveColumnWidgets_Debug::DumpArray( shortcode_parse_atts( $strParams ), dirname( __FILE__ ) . '/GetUserDefinedEnqueuedStyles.txt' );        
+            if ( trim( $strParams ) == '' ) { continue; }
             
-            $oStyleLoader = new ResponsiveColumnWidgets_StyleLoader( 
-                shortcode_parse_atts( $strParams ), 
-                array()         // pass empty arrays to disable hooks.
-            );    
-            $strStyles .= $oStyleLoader->AddStyleInHead();
-            unset( $oStyleLoader );    // ensure it's released for PHP below 5.3.
+            $strStyles .= self::getStyle( shortcode_parse_atts( $strParams ) );
             
         }
         
@@ -287,38 +355,43 @@ class ResponsiveColumnWidgets_Styles_ {
         global $arrResponsiveColumnWidgets_Flags;    
         foreach( $arrResponsiveColumnWidgets_Flags['arrEnqueueStyleParams'] as $arrParams ) {
             
-            if ( empty( $arrParams ) ) continue;
-// ResponsiveColumnWidgets_Debug::DumpArray( $strParams, dirname( __FILE__ ) . '/GetUserDefinedEnqueuedStyles.txt' );                    
-            $oStyleLoader = new ResponsiveColumnWidgets_StyleLoader( 
-                $arrParams, 
-                array()         // pass empty arrays to disable hooks.
-            );    
-            $strStyles .= $oStyleLoader->AddStyleInHead();
-            unset( $oStyleLoader );    // ensure it's released for PHP below 5.3.
+            if ( empty( $arrParams ) ) { continue; }
+
+            $strStyles .=  self::getStyle( $arrParams );
+
             
-        }
-        
+        }        
         return $strStyles;
         
     }
-    protected function GetStyleDefaultShortCode() {    // since 1.1.2.1
     
-        $oStyleLoader = new ResponsiveColumnWidgets_StyleLoader( array(), array() );    // pass empty arrays.
-        return $oStyleLoader->AddStyleInHead();
-        
+    /**
+     * 
+     * @since       1.1.2.1
+     */
+    protected function GetStyleDefaultShortCode() {   
+        return self::getStyle( array() );
     }
-    protected function getWidthForColSpan( $intMaxCol, $intColSpan ) {    // since 1.1.5
+    
+    /**
+     * 
+     * @since 1.1.5
+     */
+    protected function getWidthForColSpan( $intMaxCol, $intColSpan ) { 
 
         // If the both numbers are the same, it means it's as one element, one column.
-        if ( $intMaxCol == $intColSpan ) return 100;    // 100$
-        // if ( $intMaxCol == $intColSpan ) return 100 - 1.6;    // 98.4%. 1.6% is the left margin.
-        
+        if ( $intMaxCol == $intColSpan ) { return 100; }
+                
         return ( ( $this->strColPercentages[ $intMaxCol ] + 1.6 ) * $intColSpan ) - 1.6;
         
     }
-    protected function getWidthsForColSpans( $strPrefix1='', $strPrefix2='' ) {    // since 1.1.5
+    /**
+     * 
+     * @since       1.1.5
+     */
+    protected function getWidthsForColSpans( $strPrefix1='', $strPrefix2='' ) {   
         
-        $strRule = "";
+        $strRule    = "";
         $strPrefix1 = $strPrefix1 ? ".{$strPrefix1} " : '';    
         for ( $intMaxCol = 2; $intMaxCol <= 12; $intMaxCol++ ) {
             
@@ -326,16 +399,22 @@ class ResponsiveColumnWidgets_Styles_ {
                 $strWidth = $this->getWidthForColSpan( $intMaxCol, $intColSpan );
                 $strRule .= " {$strPrefix1}.{$strPrefix2}element_{$intColSpan}_of_{$intMaxCol} { width: {$strWidth}%; }" . PHP_EOL;
             }
+            
         }
         return $strRule;
 
     }
-    protected function GetBaseStyles( $bIsScoped=false ) {    // since 1.1.0, moved from the core class in 1.1.2.
+    /**
+     * 
+     * @since       1.1.0
+     * @since       1.1.2       Moved from the core class.
+     */
+    protected function GetBaseStyles( $bIsScoped=false ) {    
         
-        $strScoped = $bIsScoped ? "scoped" : "";
-        $strHide = 'none';
-        $strWidthsForColSpans = $this->getWidthsForColSpans();
-        $strCSS = "
+        $strScoped              = $bIsScoped ? "scoped" : "";
+        $strHide                = 'none';
+        $strWidthsForColSpans   = $this->getWidthsForColSpans();
+        $strCSS                 = "
             .{$this->strClassSelectorBox} .widget {
                 padding: 4px;
                 width: auto;
@@ -450,23 +529,30 @@ class ResponsiveColumnWidgets_Styles_ {
                 {    width: 100%;  }
             }
             */            
-        $strIDAttr = $this->oOption->SanitizeAttribute( "{$this->oOption->oInfo->Name} {$this->oOption->oInfo->Version}" );
-        $strCSS = apply_filters( 'RCW_filter_base_styles', $strCSS );
-        $strCSS = $this->oOption->arrOptions['general']['general_css_minify'] ? $this->minifyCSS( $strCSS ) : $strCSS;
+        $strIDAttr  = $this->oOption->SanitizeAttribute( "{$this->oOption->oInfo->Name} {$this->oOption->oInfo->Version}" );
+        $strCSS     = apply_filters( 'RCW_filter_base_styles', $strCSS );
+        $strCSS     = $this->oOption->arrOptions['general']['general_css_minify'] ? $this->minifyCSS( $strCSS ) : $strCSS;
         return "<style type='text/css' id='{$strIDAttr}' {$strScoped}>" 
             . $strCSS
             . "</style>" . PHP_EOL;
         
     }
 
-    protected function minifyCSS( $strCSSRules ) {    // since 1.1.5.2
+    /**
+     * Minifies CSS rules.
+     * 
+     * @since       1.1.5.2
+     * @see         http://www.catswhocode.com/blog/3-ways-to-compress-css-files-using-php
+     * @remark      Thanks to Jean-Baptiste Jung. 
+     */
+    protected function minifyCSS( $strCSSRules ) {
         
-        // by Jean-Baptiste Jung. http://www.catswhocode.com/blog/3-ways-to-compress-css-files-using-php
         // Remove comments
         $strCSSRules = preg_replace( '!/\*[^*]*\*+([^/][^*]*\*+)*/!', '', $strCSSRules );
-        // Remove tabs, spaces, newlines, etc. 
-        $strCSSRules = str_replace( array( "\r\n", "\r", "\n", "\t", '  ', '    ', '    '), '', $strCSSRules );
-        return $strCSSRules;
         
-    }    
+        // Remove tabs, spaces, newlines, etc. 
+        return str_replace( array( "\r\n", "\r", "\n", "\t", '  ', '    ', '    '), '', $strCSSRules );
+        
+    }
+    
 }
