@@ -12,7 +12,8 @@
 */
 
 class ResponsiveColumnWidgets_WidgetOptions {
-
+    
+    
     public function GetHierarchyBase() {    // since 1.1.3
         
         // Retrieves the widget options saved via the widget form in the admin page ( widgets.php )
@@ -20,7 +21,7 @@ class ResponsiveColumnWidgets_WidgetOptions {
         
         // Retrieve the plugin widgets' options set via the form of the widget in widgets.php.
         $arrWidgetOptions = $this->GetRegisteredWidgetOptionsByBaseID();
-// ResponsiveColumnWidgets_Debug::DumpArray( $arrWidgetOptions, dirname( __FILE__ ) . '/widget_options.txt' );                                        
+
         // Save the hierarchical relationship into an array. Each key has the name of sidebar ID and the element holds the values of the sidebar IDs that is embedded in.
         $arrHierarchy = array();
         foreach( $arrWidgetOptions as $arrWidgetOption ) {
@@ -36,7 +37,7 @@ class ResponsiveColumnWidgets_WidgetOptions {
                 $arrHierarchy[ $strSidebarID_Parent ][] = $arrWidgetOption['sidebarid_selected'];
                 
         }        
-// ResponsiveColumnWidgets_Debug::DumpArray( $arrHierarchy, dirname( __FILE__ ) . '/hierarcies.txt' );                                                
+
         return $arrHierarchy;
         
     }
@@ -47,8 +48,7 @@ class ResponsiveColumnWidgets_WidgetOptions {
         // Note that this includes inactive_widgets' widgets. inactive_widgets is the sidebar ID that stores inactive widgets.
         $arrWPRegisteredWidgets = empty( $arrWPRegisteredWidgets ) ? $GLOBALS['wp_registered_widgets'] : $arrWPRegisteredWidgets;
         $arrWidgets = array();
-// ResponsiveColumnWidgets_Debug::DumpArray( $arrWPRegisteredWidgets, dirname( __FILE__ ) . '/registered_widgets.txt' );        
-// ResponsiveColumnWidgets_Debug::DumpArray( $GLOBALS['wp_registered_sidebars'], dirname( __FILE__ ) . '/registered_sidebars.txt' );        
+
         foreach ( $arrWPRegisteredWidgets as $strWidgetID => $oRegisteredWidget ) {
             
             // The element ['callback'][0]->id_base stores the base ID of the widget. 
@@ -60,7 +60,9 @@ class ResponsiveColumnWidgets_WidgetOptions {
             // in the function line 946, if ( !$widget_id || $widget_id == $wp_registered_widgets[$widget]['id'] ), the warning is undefined index of 'widget id'( the value of $widget ).
             if ( 
                 ! @is_active_widget( false, $strWidgetID, $oRegisteredWidget['callback'][0]->id_base, true ) 
-            ) continue;
+            ) { 
+                continue; 
+            }
             
             $strOptionName = $oRegisteredWidget['callback'][0]->option_name;
             $intKey = $oRegisteredWidget['params'][0]['number'];
@@ -68,9 +70,9 @@ class ResponsiveColumnWidgets_WidgetOptions {
             $arrWidgetData = get_option( $strOptionName );
 
             $arrWidgets[ $strWidgetID ] = ( array ) $arrWidgetData[ $intKey ];
-            // $arrWidgets[ $strWidgetID ] = ( array ) $oRegisteredWidget;
+
         }
-// ResponsiveColumnWidgets_Debug::DumpArray( $arrWidgets, dirname( __FILE__ ) . '/widgets_options.txt' );                
+
         return $arrWidgets;
         
     }    

@@ -4,9 +4,9 @@
     
  * @package     Responsive Column Widgets
  * @copyright   Copyright (c) 2013, Michael Uno
- * @authorurl    http://michaeluno.jp
+ * @authorurl   http://michaeluno.jp
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU Public License
- * @since        1.1.2
+ * @since       1.1.2
  * 
 
 */
