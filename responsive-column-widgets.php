@@ -8,7 +8,7 @@
     Requirements:       This plugin requires WordPress >= 3.3 and PHP >= 5.2.4
     Text Domain:        responsive-column-widgets
     Domain Path:        /lang
-    Version:            1.2.0b
+    Version:            1.2.0
 */
 
 /**
@@ -18,7 +18,7 @@
  */
 class ResponsiveColumnWidgets_Registry_Base {
 
-	const Version        = '1.2.0b';    // <--- DON'T FORGET TO CHANGE THIS AS WELL!!
+	const Version        = '1.2.0';    // <--- DON'T FORGET TO CHANGE THIS AS WELL!!
 	const Name           = 'Admin Page Framework';
 	const Description    = 'Facilitates WordPress plugin and theme development.';
 	const URI            = 'http://en.michaeluno.jp/';
