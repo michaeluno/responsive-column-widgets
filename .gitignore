@@ -1,6 +1,9 @@
 # Externals
 # /tool/minifier/class/library/PHP_Beautifier
 
+# Files containing sensitive information
+*/settings.cfg
+
 # backup files.
 *.old
 *.bak
