@@ -216,6 +216,9 @@ Sure. Please post it in the [forum](http://wordpress.org/support/plugin/responsi
 
 == Changelog ==
 
+= 1.2.4 - 11/29/2015 =
+- Added an icon in the setting page which appears when no widget is added.
+
 = 1.2.3 - 05/06/2015 =
 - Fixed a compatibility issue with WordPress 4.2 that category terms were not listed in the widget box definition page.
 

@@ -1897,7 +1897,8 @@ class ResponsiveColumnWidgets_Admin_Page_ extends ResponsiveColumnWidgets_Admin_
             . '</tr>';
     }
     function GetWidgetBoexTableDefaultRow() {
-        
+        $_sSidebarID = $this->oOption->arrDefaultParams['sidebar'];
+
         $strURL = esc_url( admin_url( 'admin.php?page=' . ( isset( $_GET['page'] ) ? $_GET['page'] : '' ) . '&tab=neworedit&sidebarid=' . $this->oOption->arrDefaultParams['sidebar'] . '&mode=edit' ) );
         return '<tr class="responsive_column_widgets_default_row" >'
             . '<td align="center" class="check-column first-col" style="padding: 8px 0 8px" ></td>'
@@ -1915,10 +1916,26 @@ class ResponsiveColumnWidgets_Admin_Page_ extends ResponsiveColumnWidgets_Admin_
             . '</ul>'
             . '</td>'
             . '<td class="operation">'
-            . "<a href='{$strURL}' title='" . __( 'Edit', 'responsive-column-widgets' ) . "'><img src='" . RESPONSIVECOLUMNWIDGETSURL . "/asset/image/edit16x16.gif' /></a>" 
+            . "<a href='{$strURL}' title='" . esc_url( __( 'Edit', 'responsive-column-widgets' ) ) . "'><img src='" . RESPONSIVECOLUMNWIDGETSURL . "/asset/image/edit16x16.gif' /></a>" 
+            . $this->_getAddWidgetWarning( $_sSidebarID )
+            
             . '</td>'
             . '</tr>';
     }
+        /**
+         * @remark      also used from en extended class.
+         * @since       1.2.4
+         */
+        protected function _getAddWidgetWarning( $sSidebarID ) {
+            $_sURL = esc_url( admin_url( 'widgets.php' ) );
+            $_sLabel_AddWidget  = esc_attr( __( 'Add widgets first!', 'responsive-column-widgets' ) );
+            return is_active_sidebar( $sSidebarID )
+                ? ''
+                : "&nbsp;<a href='{$_sURL}' title='" . esc_attr( $_sLabel_AddWidget ) . "'>"
+                    . "<img src='" . RESPONSIVECOLUMNWIDGETSURL . "/asset/image/exclamationmark16x16.png' />"
+                . "</a>";
+                
+        }
     function GetWidgetBoexTableRows() {}
      
     /*
