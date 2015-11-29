@@ -203,7 +203,7 @@ final class ResponsiveColumnWidgets_Bootstrap {
                 RESPONSIVECOLUMNWIDGETSKEYADMIN,
                 RESPONSIVECOLUMNWIDGETSFILE
             );        
-            $_oAdmin->SetOptionObject( $GLOBALS['oResponsiveColumnWidgets_Options'] );
+            $_oAdmin->setOptionObject( $GLOBALS['oResponsiveColumnWidgets_Options'] );
         }
         
         // Load events

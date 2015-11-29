@@ -69,7 +69,8 @@ class ResponsiveColumnWidgets_Admin_Page_ extends ResponsiveColumnWidgets_Admin_
     /**
      * Stores the option object.
      * 
-     * @remark  It is set via the SetOptionObject() method.
+     * @remark  It is set via the setOptionObject() method.
+     * @scope   public      accessed from outside
      */
     public $oOption; 
     
@@ -97,7 +98,7 @@ class ResponsiveColumnWidgets_Admin_Page_ extends ResponsiveColumnWidgets_Admin_
         }
 
         // Properties
-        $this->strGetPro = __( 'Get Pro to enable this feature!', 'responsive-column-widgets' );
+        $this->strGetPro    = __( 'Get Pro to enable this feature!', 'responsive-column-widgets' );
         $this->strGetProNow = __( 'Get Pro Now!', 'responsive-column-widgets' );
 
         
@@ -373,27 +374,7 @@ class ResponsiveColumnWidgets_Admin_Page_ extends ResponsiveColumnWidgets_Admin_
                             'redirect' => $this->numPluginType == 0 || ( isset( $_GET['mode'] ) && $_GET['mode'] == 'edit' ) ? null : admin_url( "admin.php?page={$this->strPluginSlug}&tab=manage&updated=true" ),
                         ),                            
                     ),                    
-                ),
-                // array(    // since 1.1.6
-                    // 'pageslug' => $this->strPluginSlug,
-                    // 'tabslug' => 'neworedit',
-                    // 'id' => 'section_cache', 
-                    // 'title' => __( 'Cache', 'responsive-column-widgets' ), 
-                    // 'fields' => array(        
-                        // array(  
-                            // 'id' => 'cache_duration',
-                            // 'title' => __( 'Cache Duration', 'responsive-column-widgets' ),
-                            // 'type' => 'number',
-                            // 'min' => 0,
-                            // 'size' => 10,
-                            // 'pre_field' => '',
-                            // 'post_field' => ' ' . __( 'seconds', 'responsive-column-widgets' ),
-                            // 'description' => __( 'This sets how long the cache for the widget box\'s output remains. Set 0 to disable this feature.', 'responsive-column-widgets' ) . '&nbsp;' . __( 'Default', 'responsive-column-widgets' ) . ': ' . 0 . '<br />'
-                                // . 'e.g. 3600',
-                            // 'value' => $arrWidgetBoxOptions['cache_duration'],
-                        // ),                                
-                    // ),
-                // ),                
+                ),             
                 array(
                     'pageslug' => $this->strPluginSlug,
                     'tabslug' => 'neworedit',
@@ -1090,10 +1071,9 @@ class ResponsiveColumnWidgets_Admin_Page_ extends ResponsiveColumnWidgets_Admin_
     protected function GetColumnValueDetails( $arrColumnArray ) {    // since 1.1.1
         
         // Displays the max-column value description text.
-        // $arrColumnArray is either one dimensinal array ( old format prior to v1.1.1 ) or two dimensional array ( new one after v1.1.1 )
+        // $arrColumnArray is either one dimensional array ( old format prior to v1.1.1 ) or two dimensional array ( new one after v1.1.1 )
         $arrMaxColumnInfo = $this->oOption->FormatColumnArray( $arrColumnArray );
-                
-// echo $this->DumpArray( $arrMaxColumnInfo );        
+                     
         $intLagestWidth = 0;        
         $strTable = '<table class="responsive-column-widgets-column-details" border="0">'
             . '<tbody>'
@@ -1152,18 +1132,24 @@ class ResponsiveColumnWidgets_Admin_Page_ extends ResponsiveColumnWidgets_Admin_
         if ( isset( $_GET['sidebarid'] ) ) return trim( $_GET['sidebarid'] );
         
     }    
-    function SetOptionObject( &$oOption ) {
-        
+    /**
+     * 
+     * @scope       public      Called in the bootstrap.
+     */
+    public function setOptionObject( &$oOption ) {
         $this->oOption = $oOption;        
-        
     }
 
     /*
      * Modify the page output.
      * */
-     
+    
+    /**
+     * 
+     * @since       1.1.4
+     */
     function do_before_ResponsiveColumnWidgets_Admin_Page() {
-        $this->PrintDebugInfo();    // 1.1.4+
+        $this->PrintDebugInfo();   
     }
     
     function head_ResponsiveColumnWidgets_Admin_Page( $strHead ) {
@@ -1480,18 +1466,18 @@ class ResponsiveColumnWidgets_Admin_Page_ extends ResponsiveColumnWidgets_Admin_
         // Sanitize the values
         // - section_sidebar (HTML Post Data)
         $arr = array();
-        foreach( $arrInput[ $this->strPluginSlug ]['section_sidebar'] as $strField => $strHTML ) 
+        foreach( $arrInput[ $this->strPluginSlug ]['section_sidebar'] as $strField => $strHTML ) {
             $arr[ $strField ] = $this->FilterPostHTMLCode( $arrInput[ $this->strPluginSlug ]['section_sidebar'][ $strField ] );
+        }
         $arrInput[ $this->strPluginSlug ]['section_sidebar'] = $arr;
 
         // - section_custom_style
-        if ( isset( $arrInput['responsive_column_widgets']['section_custom_style'] ) )
+        if ( isset( $arrInput['responsive_column_widgets']['section_custom_style'] ) ) {
             $arrInput['responsive_column_widgets']['section_custom_style'] = $this->sanitizeSectionCustomStyle( $arrInput['responsive_column_widgets']['section_custom_style'] );
-    
-// $this->DumpArray( $arrInput, dirname( __FILE__ ) . '/input.txt' );
-        
+        }
+          
         // Set the variables.
-        $bIsValid = True;
+        $bIsValid  = True;
         $arrErrors = array();
         $strErrors = '';
         
@@ -1534,8 +1520,9 @@ class ResponsiveColumnWidgets_Admin_Page_ extends ResponsiveColumnWidgets_Admin_
         
         // Reconstruct the submitted array to omit the sections - make it flat to consist of fields
         $arrBoxOptions = array();
-        foreach ( $arrInput[ $this->strPluginSlug ] as $arrFields ) 
+        foreach ( $arrInput[ $this->strPluginSlug ] as $arrFields ) {
             $arrBoxOptions = $arrBoxOptions + $arrFields;         
+        }
         
         // Please review.
         $this->PleaseReview();
@@ -1547,7 +1534,11 @@ class ResponsiveColumnWidgets_Admin_Page_ extends ResponsiveColumnWidgets_Admin_
         return $arrInput;
             
     } 
-    protected function sanitizeSectionCustomStyle( $arrSection ) {    // since 1.1.7
+    /**
+     * 
+     * @since       1.1.7
+     */
+    protected function sanitizeSectionCustomStyle( $arrSection ) {
 
         if ( isset( $arrSection['widget_box_container_background_color'] ) && trim( strtolower( $arrSection['widget_box_container_background_color'] ) ) == 'transparent' )
             $arrSection['widget_box_container_background_color'] = '';
@@ -1562,11 +1553,16 @@ class ResponsiveColumnWidgets_Admin_Page_ extends ResponsiveColumnWidgets_Admin_
 
         return $arrSection;
     }
-    protected function PleaseReview() {    // since 1.1.1.2
+    /**
+     * 
+     * @since       1.1.1.2
+     */
+    protected function PleaseReview() {   
         
         // Stores the current time. The option array will be updated by the following UpdateBoxOptions() method.
-        if ( ! isset( $this->oOption->arrOptions['general']['time_first_option_update'] ) )
+        if ( ! isset( $this->oOption->arrOptions['general']['time_first_option_update'] ) ) {
             $this->oOption->arrOptions['general']['time_first_option_update'] = time();
+        }
         
     }
     protected function CleanOldVersionBoxOptions( $arrBoxOptions ) {    // since 1.0.9
@@ -1578,24 +1574,26 @@ class ResponsiveColumnWidgets_Admin_Page_ extends ResponsiveColumnWidgets_Admin_
     }
     function UpdateBoxOptions( $arrInput, $bIsNew ) {
         
-// $this->DumpArray( $arrInput, dirname( __FILE__ )    . '/input.txt' );                
-
         // Sanitisation for the first two sections.
         $arrInput['maxwidgets'] = $this->oUtil->FixNumber( $arrInput['maxwidgets'], 0, 0 );
-        $arrInput['maxrows'] = $this->oUtil->FixNumber( $arrInput['maxrows'], 0, 0 );
-        $arrInput['sidebar'] = ! empty( $_POST['isnew'] ) ? $this->GetAvailableSidebarID() : $arrInput['sidebar'];
-        $arrInput['label'] = isset( $arrInput['label'] ) ? $arrInput['label'] : $this->oOption->arrOptions['boxes'][ $arrInput['sidebar'] ]['label'];
-        $arrInput['omit'] = $this->SanitizeNumericSequenceToArray( $arrInput['omit'] );
-        $arrInput['showonly'] = $this->SanitizeNumericSequenceToArray( $arrInput['showonly'] );        
-        $arrInput['colspans'] = $this->oOption->formatColSpanArray( $arrInput['colspans'] );        // since 1.1.5    
+        $arrInput['maxrows']    = $this->oUtil->FixNumber( $arrInput['maxrows'], 0, 0 );
+        $arrInput['sidebar']    = ! empty( $_POST['isnew'] ) 
+            ? $this->GetAvailableSidebarID() 
+            : $arrInput['sidebar'];
+        $arrInput['label']      = isset( $arrInput['label'] ) 
+            ? $arrInput['label'] 
+            : $this->oOption->arrOptions['boxes'][ $arrInput['sidebar'] ]['label'];
+        $arrInput['omit']       = $this->SanitizeNumericSequenceToArray( $arrInput['omit'] );
+        $arrInput['showonly']   = $this->SanitizeNumericSequenceToArray( $arrInput['showonly'] );        
+        $arrInput['colspans']   = $this->oOption->formatColSpanArray( $arrInput['colspans'] ); // 1.1.5+
 
         // Sanitize the column array.
-        $arrInput['columns'] = $this->SanitizeColumnInput( $arrInput['columns'] );
+        $arrInput['columns']    = $this->SanitizeColumnInput( $arrInput['columns'] );
 
         // Sanitization for the auto-insert section.
-        $arrInput['autoinsert_enable_filters'] = $this->SanitizeStringToArray( $arrInput['autoinsert_enable_filters'] );
-        $arrInput['autoinsert_enable_actions'] = $this->SanitizeStringToArray( $arrInput['autoinsert_enable_actions'] );
-        $arrInput['autoinsert_enable_post_ids'] = $this->SanitizeNumericSequenceToArray( $arrInput['autoinsert_enable_post_ids'] );
+        $arrInput['autoinsert_enable_filters']   = $this->SanitizeStringToArray( $arrInput['autoinsert_enable_filters'] );
+        $arrInput['autoinsert_enable_actions']   = $this->SanitizeStringToArray( $arrInput['autoinsert_enable_actions'] );
+        $arrInput['autoinsert_enable_post_ids']  = $this->SanitizeNumericSequenceToArray( $arrInput['autoinsert_enable_post_ids'] );
         $arrInput['autoinsert_disable_post_ids'] = $this->SanitizeNumericSequenceToArray( $arrInput['autoinsert_disable_post_ids'] );
         
         // Update
@@ -1654,10 +1652,11 @@ class ResponsiveColumnWidgets_Admin_Page_ extends ResponsiveColumnWidgets_Admin_
     
     /**
      * @since       1.0.4
+     * @scope       public      Accessed from outside.
      */
-    function IsLabelAlreadyUsed( $strLabel ) {
-        foreach( $this->oOption->arrOptions['boxes'] as $strSidebarID => $arrBoxOptions ) {
-            if ( $arrBoxOptions['label'] == $strLabel ) { 
+    public function IsLabelAlreadyUsed( $sLabel ) {
+        foreach( $this->oOption->arrOptions[ 'boxes' ] as $_sSidebarID => $_aBoxOptions ) {
+            if ( $_aBoxOptions['label'] == $sLabel ) { 
                 return true; 
             }
         }
@@ -1666,8 +1665,9 @@ class ResponsiveColumnWidgets_Admin_Page_ extends ResponsiveColumnWidgets_Admin_
     /**
      * 
      * @since       1.0.4
+     * @scope       public      Accessed from outside.
      */
-    function GetAvailableSidebarID() {
+    public function GetAvailableSidebarID() {
 
         $numID = '';
         $arrBoxes = ( array ) $this->oOption->arrOptions['boxes'];
@@ -1898,7 +1898,7 @@ class ResponsiveColumnWidgets_Admin_Page_ extends ResponsiveColumnWidgets_Admin_
     }
     function GetWidgetBoexTableDefaultRow() {
         
-        $strURL = admin_url( 'admin.php?page=' . ( isset( $_GET['page'] ) ? $_GET['page'] : '' ) . '&tab=neworedit&sidebarid=' . $this->oOption->arrDefaultParams['sidebar'] . '&mode=edit' );
+        $strURL = esc_url( admin_url( 'admin.php?page=' . ( isset( $_GET['page'] ) ? $_GET['page'] : '' ) . '&tab=neworedit&sidebarid=' . $this->oOption->arrDefaultParams['sidebar'] . '&mode=edit' ) );
         return '<tr class="responsive_column_widgets_default_row" >'
             . '<td align="center" class="check-column first-col" style="padding: 8px 0 8px" ></td>'
             . '<td>'
@@ -2224,8 +2224,8 @@ class ResponsiveColumnWidgets_Admin_Page_ extends ResponsiveColumnWidgets_Admin_
     }
     
     protected $numPluginType = 0;
-    protected $strGetPro = 'Get Pro to enabel this feature!';
-    protected $strGetProNow = 'Get Pro now!';
+    protected $strGetPro     = 'Get Pro to enabel this feature!';
+    protected $strGetProNow  = 'Get Pro now!';
     function __NoteProStrings() {    
         __( '<a href="http://wordpress.org/extend/plugins/responsive-column-widgets/other_notes/">Responsive Column Widgets</a> needs to be installed and activated.', 'responsive-column-widgets' );
         __( 'Add New Box', 'responsive-column-widgets' );
