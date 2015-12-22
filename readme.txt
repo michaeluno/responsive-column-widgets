@@ -3,35 +3,66 @@ Contributors:       Michael Uno, miunosoft
 Donate link:        http://en.michaeluno.jp/donate
 Tags:               array, cache, column, columns, content, css, css3, filter, flexible width, grid, grid layout, grid system, html5, layout, magazine layout, miunosoft, page, pages, post, posts, plugin, plugins, row, rows, responsive, responsive design, sidebar, sidebars, shortcode, style, theme, widget, widgets
 Requires at least:  3.3
-Tested up to:       4.3.1
-Stable tag:         1.2.3
+Tested up to:       4.4
+Stable tag:         1.2.4
 License:            GPLv2 or later
 License URI:        http://www.gnu.org/licenses/gpl-2.0.html
 Creates a custom responsive column widget box.
 
 == Description ==
+<h4>Show Responsive Columns in Posts with Widgets</h4>
 Do you want to arrange widgets horizontally? If so, this plugin may be the solution for you.
 
-Or if you are a developer and looking for an easy way to render some outputs in responsive columns, this plugin will be handy. Pass your arrays to the plugin filter. Then the plugin will take care of it for you.
+Add desired widgets to the custom scrollbar the plugin creates and set up an auto-insert. 
+
+If you are a developer and looking for an easy way to render some outputs in responsive columns, this plugin will be handy. Pass your arrays to the plugin filter. Then the plugin will take care of it for you.
 
 <h4>How It Works</h4>
+
 [youtube http://www.youtube.com/watch?v=vo36sW7W35Y]
 
-<h4>Features</h4>
-* **Displays widgets in columns** - the main feature of this plugin. It displays widgets horizontally with a grid system.
-* **Responsive Design** - when the browser width changes, it automatically adjusts the layout. This is for tablet and mobile visitors.
-* **Set Number of Columns per Row** - flexibly set the number of columns in each row.
-* **Set Number of Columns per Browser Width** - flexibly set the number of columns by browser width.
-* **Up to 12 columns** - for example, if you have 24 registered widgets, you can place them in two rows consisting of 12 items across horizontally in each row.
-* **Works in Posts/Pages** - with the shortcode, you can embed the responsive widgets in post and pages.
-* **PHP code and Shortcode** - use them to display the widgets in theme template or in posts/pages.
-* **Default Sidebars Integration** - The sidebars defined by your theme also can be displayed in columns.
-* **Auto Insert** - The widget box can be embedded automatically without the shortcode.
-* **Sidebar Encapsulation** - This is *widgets in widget* functionality. With the widget that the plugin provides, the whole sidebar contents can be embedded as a widget item into another sidebar.
-* **Column Span** - column spans are configurable so that you can set wider widget areas.
-* **Cache** - the output can be cached and the cache lifetime is configurable.
-* **Custom Array** - if you can code PHP, you can pass an array to the plugin's filter so that your array contents can be rendered in multiple columns instead of widgets.
-* and [more](http://wordpress.org/extend/plugins/responsive-column-widgets/other_notes/).
+<h5>Steps</h5>
+- Add widgets.
+- Enter the number of columns.
+- Enable Auto-insert or insert the shortcode.
+
+<h4>Displays Widgets in Columns</h4>
+The plugin will let you display widgets horizontally with a grid system. This is the main feature of the plugin.
+
+<h4>Responsive Design for Mobile Visitors</h4>
+When the browser width changes, it automatically adjusts the layout. This is important for tablet and mobile visitors.
+
+<h4>Set Number of Columns per Row</h4>
+You can flexibly set the number of columns in each row.
+
+<h4>Set Number of Columns by Screen Width</h4>
+Flexibly set the number of columns by browser width. In other words, you can control the number of columns for particular screen widths.
+
+<h4>Show Responsive Columns Everywhere</h4>
+
+<h5><strong>Auto-insert</strong><h5>
+Take advantage of the Auto-insert feature which automatically inserts the defined widget box to your desired location. You don't have to use the shortcode.
+
+<h5><strong>PHP code and Shortcode</strong><h5>
+Use PHP code in the theme template or the shortcode in posts.
+
+<h4>Default Sidebars Integration</h4>
+Sidebars defined by your theme also can be displayed in columns.
+
+<h4>Create Complex Columns</h4>
+Achieve more advanced complex design by taking advantage of the options that the plugin provides.
+
+<h5>Nesting Sidebars<h5>
+This is *widgets in widget* functionality. With the widget that the plugin provides, the whole sidebar contents can be embedded as a widget item into another sidebar.
+
+<h5>Column Span</h5>
+Column spans are configurable so that you can set wider widget areas.
+
+<h4>For Developers</h4>
+<h5>Custom Array</h5>
+If you can code, you can pass an array to the plugin's filter so that your array contents can be rendered in multiple columns instead of widgets.
+
+See [more](http://wordpress.org/extend/plugins/responsive-column-widgets/other_notes/).
  
 == Installation ==
 
@@ -201,6 +232,9 @@ Yes, with [Pro](http://en.michaeluno.jp/responsive-column-widgets/responsive-col
 = It seems the plugin conflicts with my theme. Can you help? =
 It happens occasionally. Please ask for [support](http://wordpress.org/support/plugin/responsive-column-widgets) with a link to your live site and the screenshots. In most cases, it can be solved by adjusting CSS rules causing the conflicts.
 
+= Up to how many columns can I create =
+You can set up to 12 columns.
+
 = I have a feature request. Would you listen? =
 Sure. Please post it in the [forum](http://wordpress.org/support/plugin/responsive-column-widgets) or the comment section of the [plugin page](http://en.michaeluno.jp/responsive-column-widgets/).
 
@@ -215,6 +249,9 @@ Sure. Please post it in the [forum](http://wordpress.org/support/plugin/responsi
 7. ***Sidebar Encapsulation***
 
 == Changelog ==
+
+= 1.2.5 - 12/22/2015 =
+- Fixed a compatibility issue with PHP 7 which caused a fatal error.
 
 = 1.2.4 - 11/29/2015 =
 - Added an icon in the setting page which appears when no widget is added.
