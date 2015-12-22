@@ -4,7 +4,7 @@ Donate link:        http://en.michaeluno.jp/donate
 Tags:               array, cache, column, columns, content, css, css3, filter, flexible width, grid, grid layout, grid system, html5, layout, magazine layout, miunosoft, page, pages, post, posts, plugin, plugins, row, rows, responsive, responsive design, sidebar, sidebars, shortcode, style, theme, widget, widgets
 Requires at least:  3.3
 Tested up to:       4.4
-Stable tag:         1.2.4
+Stable tag:         1.2.5
 License:            GPLv2 or later
 License URI:        http://www.gnu.org/licenses/gpl-2.0.html
 Creates a custom responsive column widget box.
@@ -13,7 +13,7 @@ Creates a custom responsive column widget box.
 <h4>Show Responsive Columns in Posts with Widgets</h4>
 Do you want to arrange widgets horizontally? If so, this plugin may be the solution for you.
 
-Add desired widgets to the custom scrollbar the plugin creates and set up an auto-insert. 
+Add desired widgets to the custom sidebar the plugin creates and set up an auto-insert. 
 
 If you are a developer and looking for an easy way to render some outputs in responsive columns, this plugin will be handy. Pass your arrays to the plugin filter. Then the plugin will take care of it for you.
 
@@ -40,10 +40,10 @@ Flexibly set the number of columns by browser width. In other words, you can con
 
 <h4>Show Responsive Columns Everywhere</h4>
 
-<h5><strong>Auto-insert</strong><h5>
+<h5><strong>Auto-insert</strong></h5>
 Take advantage of the Auto-insert feature which automatically inserts the defined widget box to your desired location. You don't have to use the shortcode.
 
-<h5><strong>PHP code and Shortcode</strong><h5>
+<h5><strong>PHP code and Shortcode</strong></h5>
 Use PHP code in the theme template or the shortcode in posts.
 
 <h4>Default Sidebars Integration</h4>
@@ -52,7 +52,7 @@ Sidebars defined by your theme also can be displayed in columns.
 <h4>Create Complex Columns</h4>
 Achieve more advanced complex design by taking advantage of the options that the plugin provides.
 
-<h5>Nesting Sidebars<h5>
+<h5>Nesting Sidebars</h5>
 This is *widgets in widget* functionality. With the widget that the plugin provides, the whole sidebar contents can be embedded as a widget item into another sidebar.
 
 <h5>Column Span</h5>
