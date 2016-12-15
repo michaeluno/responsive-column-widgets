@@ -1853,7 +1853,7 @@ class ResponsiveColumnWidgets_Admin_Page_ extends ResponsiveColumnWidgets_Admin_
         $strString = addslashes( $strString );                    // the original function call was doing this - could be redundant but haven't fully tested it
         $strString = stripslashes( $strString );                    // wp_filter_post_kses()
         $strString = wp_kses_no_null( $strString );                // wp_kses()
-        $strString = wp_kses_js_entities( $strString );            // wp_kses()
+        // @deprecated $strString = wp_kses_js_entities( $strString );            // wp_kses()
         $strString = wp_kses_normalize_entities( $strString );    // wp_kses()
         $strString = wp_kses_hook( $strString, $arrAllowedHTML, $arrAllowedProtocols ); // WP changed the order of these funcs and added args to wp_kses_hook
         $strString = wp_kses_split( $strString, $arrAllowedHTML, $arrAllowedProtocols );        
