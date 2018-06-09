@@ -1,9 +1,9 @@
 ﻿=== Responsive Column Widgets ===
 Contributors:       Michael Uno, miunosoft
 Donate link:        http://en.michaeluno.jp/donate
-Tags:               array, cache, column, columns, content, css, css3, filter, flexible width, grid, grid layout, grid system, html5, layout, magazine layout, miunosoft, page, pages, post, posts, plugin, plugins, row, rows, responsive, responsive design, sidebar, sidebars, shortcode, style, theme, widget, widgets
+Tags:               column, grid, layout, magazine layout, responsive, sidebar, widget
 Requires at least:  3.3
-Tested up to:       4.7
+Tested up to:       4.9.6
 Stable tag:         1.2.6
 License:            GPLv2 or later
 License URI:        http://www.gnu.org/licenses/gpl-2.0.html
@@ -250,7 +250,7 @@ Sure. Please post it in the [forum](http://wordpress.org/support/plugin/responsi
 
 == Changelog ==
 
-= 1.2.7 =
+= 1.2.7 - 06/10/2018 =
 - Fixed a compatibility issue with PHP 7.1 which caused an error of illegal string offset.
 - Fixed a WordPress notice, `Notice: get_screen_icon is deprecated since version 3.8.0.`, appeared in setting pages.
 
