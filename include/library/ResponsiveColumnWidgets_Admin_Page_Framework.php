@@ -32,6 +32,7 @@
  * 
  * @since       1.0.4.2.mod01       Added the do_settings_fields and do_settings_sections method to be compatible with WordPress 4.2 or higher.
  * @since       1.0.4.2.mod02       Fixed a compatibility issue with WordPress 4.2 regarding the `taxonomy` field type which became not possible to list terms due to an argument name conflict.
+ * @since       1.2.7               Fixed a WordPress notice, `Notice: get_screen_icon is deprecated since version 3.8.0.`
  */
 class ResponsiveColumnWidgets_Admin_Page_Framework {
          
@@ -888,7 +889,9 @@ class ResponsiveColumnWidgets_Admin_Page_Framework {
         <div class="wrap">
             <?php                 
                 // Screen icon
-                $strHeader .= $this->arrIcons[$strPageSlug] ? '<div class="icon32" style="background-image: url(' . $this->arrIcons[$strPageSlug] . ');"><br /></div>' : get_screen_icon();
+                $strHeader .= $this->arrIcons[ $strPageSlug ] || ( version_compare( $GLOBALS['wp_version'], '3.8', '>=' ) )
+                    ? '<div class="icon32" style="background-image: url(' . $this->arrIcons[$strPageSlug] . ');"><br /></div>'
+                    : get_screen_icon();
                 
                 // Page heading tabs
                 $strHeader .= ( $this->bShowPageHeadingTabs ) ? $this->AddPageHeadingTabs( $strPageSlug ) : '<h2>' . $this->arrPageTitles[$strPageSlug] . '</h2>';

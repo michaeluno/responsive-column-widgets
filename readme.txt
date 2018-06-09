@@ -252,6 +252,7 @@ Sure. Please post it in the [forum](http://wordpress.org/support/plugin/responsi
 
 = 1.2.7 =
 - Fixed a compatibility issue with PHP 7.1 which caused an error of illegal string offset.
+- Fixed a WordPress notice, `Notice: get_screen_icon is deprecated since version 3.8.0.`, appeared in setting pages.
 
 = 1.2.6 - 12/16/2016 =
 - Fixed a compatibility issue with WordPress 4.7 that caused a warning `wp_kses_js_entities is deprecated`.
