@@ -4,7 +4,7 @@ Donate link:        http://en.michaeluno.jp/donate
 Tags:               column, grid, layout, magazine layout, responsive, sidebar, widget
 Requires at least:  3.3
 Tested up to:       4.9.6
-Stable tag:         1.2.6
+Stable tag:         1.2.7
 License:            GPLv2 or later
 License URI:        http://www.gnu.org/licenses/gpl-2.0.html
 Creates a custom responsive column widget box.
