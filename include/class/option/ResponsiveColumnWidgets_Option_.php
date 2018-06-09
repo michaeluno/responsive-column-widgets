@@ -219,9 +219,12 @@ class ResponsiveColumnWidgets_Option_ {
      * @access      public      the Auto-Insert class also uses it.
     */
     public function formatParameterArray( $arrParams ) {    
-        
+
+        // @since 1.2.7 For PHP 7.1 or above
+        $arrParams = ( array ) $arrParams;
+
         // Determine the sidebar ID ( widget box's ID ).
-        $arrParams['sidebar'] = ! empty( $arrParams['sidebar'] ) 
+        $arrParams['sidebar'] = ! empty( $arrParams['sidebar'] )
             ? $arrParams['sidebar'] 
             : $this->FindWidgetBoxSidebarIDFromParams( $arrParams );
         
@@ -236,8 +239,7 @@ class ResponsiveColumnWidgets_Option_ {
         return $arrParams;
             
         // @deprecated 1.1.8
-        // $arrParams = shortcode_atts( $arrDefaultParams, $arrParams );    
-        
+        // $arrParams = shortcode_atts( $arrDefaultParams, $arrParams );
         
     }
     
